@@ -25,6 +25,10 @@
 	{% if title != 'contact' %}
 	<a href="/contact">Contact</a>
 	{% endif %}
+
+	{% if session %}
+	<a href="/logout">Logout</a>
+	{% endif %}
 	
 	
 </body>

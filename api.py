@@ -1,5 +1,5 @@
 from flask import Flask,render_template,request,redirect,url_for,session
-from model  import check_user,add_user_Todb
+from model  import check_user,add_user_Todb,check_product,addproduct_todb
 
 app = Flask(__name__)
 
@@ -61,11 +61,16 @@ def login():
 		# if bool(check_user(username)) and (check_user(username)['password']==password):
 			session['username'] = username
 			session['type'] = check_user(username)['type']
-			return redirect(url_for('about'))
+			return redirect(url_for('home'))
 		return "username or password is in correct"
 
 	return redirect(url_for('home'))
 
+
+@app.route('/logout')
+def logout():
+	 session.clear()
+	 return redirect(url_for('home'))
 
 # @app.route('/login',methods =['GET','POST'])
 # def login():
@@ -82,6 +87,29 @@ def login():
 
 # 			return redirect(url_for('about'))
 # 		return "username and password is incorrect"
+
+
+@app.route('/products',methods=['GET','POST'])
+def products():
+	
+	if request.method == 'POST':
+
+		productinfo = {}
+
+		productinfo['pname'] = request.form['pname']
+		productinfo['price'] = request.form['price']
+		productinfo['description'] = request.form['description']
+		productinfo['seller'] = session['username']
+		
+		if bool(check_product(productinfo['pname'])) is True:
+
+			return "Product already in cart"
+
+
+		addproduct_todb(productinfo)
+		return redirect(url_for('products'))
+
+	return redirect(url_for('products'))
 
 
 if __name__ == '__main__':
